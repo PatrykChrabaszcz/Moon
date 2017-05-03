@@ -13,7 +13,7 @@ url:                https://patrykchrabaszcz.github.io/
 # Jekyll
 permalink:          /:title/
 markdown:           kramdown
-highlighter:        rogue
+highlighter:        rouge
 kramdown:
   auto_ids:         true
   footnote_nr:      1
