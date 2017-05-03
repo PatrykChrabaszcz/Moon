@@ -1,9 +1,9 @@
 # Site
 title:              Some stuff
 bio:                'Student'
-description:        ""
+description:        "Page"
 reading_time:       true
-words_per_minute:   200
+words_per_minute:   150
 logo:               'assets/img/Logo.jpg'
 background:         'assets/img/Palms.jpg'
 tiled_bg:           false   # Set this true if you want to tile your background image, otherwise it will be covered
@@ -37,20 +37,20 @@ disqus_shortname:   https-patrykchrabaszcz-github-io
   #ad-client:
   #ad-slot:
 #bing-verify:
-#email:
-twitter:            username
-facebook:           username
-github-url:         username
+email:              chrabaszcz.patryk@gmail.com
+#twitter:            username
+#facebook:           username
+github-url:         https://github.com/PatrykChrabaszcz
 #stackoverflow:     123456/username   from a "http://stackoverflow.com/users/123456/username" link
-#linkedin:          username
+linkedin:          https://www.linkedin.com/in/patryk-chrabaszcz-22a6b083/
 #xing:              username
-instagram:          username
+#instagram:          username
 #lastfm:            username
 #tumblr:            username
 #medium:            '@username'
 #pinterest:         username
 #foursquare:        username
-steam:              username
+#steam:              username
 #dribbble:          username
 #youtube:           username
 #youtube-channel:   channel
