@@ -13,7 +13,7 @@ url:                https://PatrykChrabaszcz.github.io/Moon
 # Jekyll
 permalink:          /:title/
 markdown:           kramdown
-highlighter:        pygments
+highlighter:        rogue
 kramdown:
   auto_ids:         true
   footnote_nr:      1
