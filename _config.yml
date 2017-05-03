@@ -13,7 +13,7 @@ url:                https://taylantatli.github.io/Moon
 # Jekyll
 permalink:          /:title/
 markdown:           kramdown
-highlighter:        rouge
+highlighter:        pygments
 kramdown:
   auto_ids:         true
   footnote_nr:      1
