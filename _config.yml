@@ -78,11 +78,9 @@ exclude: [README.md, Gemfile, Gemfile.lock, node_modules, gulpfile.js, package.j
 
 prose:
   rooturl: "_posts"
-  siteurl: 'http://rrevanth.github.io/'
-  relativeLinks: 'http://rrevanth.github.io/links.jsonp'
-  media: 'assests/media'
+
   metadata:
-    _posts/blog:
+    _posts:
       - name: "published"
         field:
           element: "checkbox"
@@ -125,4 +123,3 @@ prose:
         field:
           element: "text"
           value: "<!--more-->"
-          
