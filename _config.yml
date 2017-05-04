@@ -42,7 +42,7 @@ email:              chrabaszcz.patryk@gmail.com
 #facebook:           username
 github-url:         https://github.com/PatrykChrabaszcz
 #stackoverflow:     123456/username   from a "http://stackoverflow.com/users/123456/username" link
-linkedin:          https://www.linkedin.com/in/patryk-chrabaszcz-22a6b083/
+linkedin:           https://www.linkedin.com/in/patryk-chrabaszcz-22a6b083/
 #xing:              username
 #instagram:          username
 #lastfm:            username
@@ -74,3 +74,55 @@ jekyll-mentions:
 
 # Exclude list
 exclude: [README.md, Gemfile, Gemfile.lock, node_modules, gulpfile.js, package.json, _site, src, vendor, CNAME, LICENSE, Rakefile]
+
+
+prose:
+  rooturl: "_posts"
+  siteurl: 'http://rrevanth.github.io/'
+  relativeLinks: 'http://rrevanth.github.io/links.jsonp'
+  media: 'assests/media'
+  metadata:
+    _posts/blog:
+      - name: "published"
+        field:
+          element: "checkbox"
+          label: "Publish now"
+          help: "Keep this unchecked if you do not want to   publish the article right now"
+          value: "true"
+      - name: "layout"
+        field:
+          element: "hidden"
+          value: "post"
+      - name: "title"
+        field:
+          element: "text"
+          label: "Enter title of the Article"
+          placeholder: "Enter Title"
+      - name: "date"
+        field:
+          element: "text"
+          label: "Date"
+          value: "CURRENT_DATETIME"
+      - name: "author"
+        field:
+          element: "hidden"
+          value: "Revanth Revoori"
+      - name: "categories"
+        field:
+          element: "hidden"
+          value: "blog"
+          alterable: "true"
+      - name: "tags"
+        field:
+          element: "multiselect"
+          label: "Add Tags"
+          placeholder: "Add Tags"
+          options:
+            - name: "Blog"
+              value: "blog"
+          alterable: true
+      - name: "excerpt_separator"
+        field:
+          element: "text"
+          value: "<!--more-->"
+          
