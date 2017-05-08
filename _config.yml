@@ -101,10 +101,6 @@ prose:
           element: "text"
           label: "Date"
           value: "CURRENT_DATETIME"
-      - name: "author"
-        field:
-          element: "hidden"
-          value: "Revanth Revoori"
       - name: "categories"
         field:
           element: "hidden"
