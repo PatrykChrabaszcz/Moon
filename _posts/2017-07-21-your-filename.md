@@ -20,15 +20,15 @@ However it might be a good exercise to implement a Neural Network on our own.
 
 Fully connected layer can be described by the weight matrix, bias vector and activation function. It transforms N dimensional input data into M dimensional output data. New features will be computed as a linear combination of old features passed through a nonlinearity layer.
 
-![FullyConnectedLayer](/assets/img/NumpyNeuralNetwork/NNLayer.png)
+![FullyConnectedLayer](/assets/img/NeuralNetworkNumpy/Network.png)
 
 It can be easily seen that those operations can be written as a matrix multiplication. It is presented below (Nonlinearity function ommited on this picture)
 
-![VectorizedForm](/assets/img/NumpyNeuralNetwork/VectorForm.png)
+![VectorizedForm](/assets/img/NeuralNetworkNumpy/ForwardVector.png)
 
 That is how activations in fully connected layer are computed for a single input sample. To forward multiple samples at once we will simply forward input matrix instead of a single input vector.
 
-![MatrixForm](/assets/img/NumpyNeuralNetwork/MatrixForm.png)
+![MatrixForm](/assets/img/NeuralNetworkNumpy/ForwardMatrix.png)
 
 To train Neural Network we will need to adjust weights **w** and biases **b** such that we increase the performance of our network (minimize loss). Let's assume that our layer got gradient information from the next layer telling how to adjust outputs **O** to decrease this loss function. Our layer will have to compute two things:
 1. Gradient of loss with respect to its own parameters **w** and **b**, this will be used to adjust those parameters and decrease the loss.
@@ -36,31 +36,31 @@ To train Neural Network we will need to adjust weights **w** and biases **b** su
 
 How to compute derivatives with respect to the parameters. To simplify we consider just one output neuron, later we will generalize to the full layer.
 
-![ParametersGradient](/assets/img/NumpyNeuralNetwork/NNDerivatives.png)
+![ParametersGradient](/assets/img/NeuralNetworkNumpy/ParamDerivatives.png)
 
 Using chain rule we derive that:
 
-![ChainRule](/assets/img/NumpyNeuralNetwork/ChainRule.png)
+![ChainRule](/assets/img/NeuralNetworkNumpy/ChainRule.png)
 
 We already have all components to compute gradients. Derivative of **Loss** with respect to output was delivered to us by the next layer in the network, derivative of **f** (activation function) with respect to **x1** can be computed analytically and we know input **I**.
 
 Again we would like to find matrix equations for backpropagation. Starting with an equation for a single input vector (one sample). Dot operator indicates elementwise multiplication:
 
 
-![VectorDerivative](/assets/img/NumpyNeuralNetwork/DerivativeVectorForm.png)
+![VectorDerivative](/assets/img/NeuralNetworkNumpy/ParamVectorGrad.png)
 
 And if we want to forward multiple samples we will have to average gradients over this minibatch:
 
-![VectorDerivative](/assets/img/NumpyNeuralNetwork/DerivativeMatrixForm.png)
+![VectorDerivative](/assets/img/NeuralNetworkNumpy/ParamMatrixGrad.png)
 
 Now we need to find out how to compute the gradient of **Loss** with respect to the **input**. This information will be passed to the previous layer (backpropagation) and used as a training signal.
 
 
-![InputDerivative](/assets/img/NumpyNeuralNetwork/NNInputDerivatives.png)
+![InputDerivative](/assets/img/NeuralNetworkNumpy/InputGradDerivation.png)
 
 We will directly go to the matrix multiplication form:
 
-![InputDerivativeMatrixForm](/assets/img/NumpyNeuralNetwork/NNInputDerivativeMatrixForm.png)
+![InputDerivativeMatrixForm](/assets/img/NeuralNetworkNumpy/InputMatrixGrad.png)
 
 
 ## Implementation of Fully Connected Layer
@@ -107,10 +107,4 @@ class DenseLayer(object):
 
 We need to store input value **self.x** when we do forward propagation, it will be later used in backpropagation part. We also store gradients of our parameters **self.dw**, **self.db** after backpropagation,  those will be later used by the optimizer to update the network . 
 
-We might want to use our implementation with SGD (Stochastic Gradient Descent) where we update parameters after each minibatch or with Gradient Descent where we update parameters after passing all the training data. To use Gradient Descent we will have to store history of minibatch gradients and average over that before we perform update. 
-
-
-
-
-
-
+We might want to use our implementation with SGD (Stochastic Gradient Descent) where we update parameters after each minibatch or with Gradient Descent where we update parameters after passing all the training data. To use Gradient Descent we will have to store history of minibatch gradients and average over that before we perform update.
