@@ -6,7 +6,7 @@ date: '2017-07-21 23:56 +0200'
 excerpt_separator: <!--more-->
 title: Neural Network in Pyton using Numpy
 ---
-## Implementing Neural Network in Python using Numpy
+# Implementing Neural Network in Python using Numpy
 
 Here we will see how to implement Neural Network in Python using only numpy library. 
 There are plenty of deep learning frameworks currently available for python. Those include  
@@ -16,7 +16,7 @@ There are plenty of deep learning frameworks currently available for python. Tho
 
 However it might be a good exercise to implement a Neural Network on our own.
 
-### Implementing fully connected layer
+## Deriving equations for Forward and Backward Pass
 
 Fully connected layer can be described by the weight matrix, bias vector and activation function. It transforms N dimensional input data into M dimensional output data. New features will be computed as a linear combination of old features passed through a nonlinearity layer.
 
@@ -54,6 +54,60 @@ And if we want to forward multiple samples we will have to average gradients ove
 ![VectorDerivative](/assets/img/NumpyNeuralNetwork/DerivativeMatrixForm.png)
 
 Now we need to find out how to compute the gradient of **Loss** with respect to the **input**. This information will be passed to the previous layer (backpropagation) and used as a training signal.
+
+
+![InputDerivative](/assets/img/NumpyNeuralNetwork/NNInputDerivatives.png)
+
+We will directly go to the matrix multiplication form:
+
+![InputDerivativeMatrixForm](/assets/img/NumpyNeuralNetwork/NNInputDerivativeMatrixForm.png)
+
+
+## Implementation of Fully Connected Layer
+
+We want to implement fully connected layer as a class.
+
+Let's start with the constructor 
+
+- **activation**: object that represents nonlinearity function. This object can be used to compute **f(x)** as well as **f'(x)**. 
+- **input_size_info**: describes how many inputs this layer has. We want to simplify usage so we make it possible to derive this information from the previous layer.
+- **init_func**: this function is used to initialize parameters in this layer
+- **neurons_num**: How many neurons this layer has
+
+```python
+
+class DenseLayer(object):
+    def __init__(self, activation, input_size_info=None, init_func=WeightInit.xavier_init_gauss,
+                 neurons_num=100):
+        try:
+            input_size = input_size_info.neurons_num
+        except AttributeError:
+            input_size = input_size_info
+
+        self.neurons_num = neurons_num
+        self.w = np.zeros(shape=(input_size, neurons_num), dtype='float32')
+        self.b = np.zeros(shape=(1, neurons_num), dtype='float32')
+        init_func(self)
+
+        self.x = None                       # Input
+        self.dx = None                      # Gradient w.r.t. input (List for data chunks)
+        self.dw = np.zeros_like(self.w)     # Gradient w.r.t. weights (List for data chunks)
+        self.db = np.zeros_like(self.b)     # Gradient w.r.t. biases (List for data chunks)
+
+        # Lists used for gradient averaging
+        self.dx_list = []
+        self.dw_list = []
+        self.db_list = []
+        self.s_list = []
+        self.a = None   # x @ w
+        self.y = None   # Output
+        self.activation = activation
+
+```
+
+We need to store input value **self.x** when we do forward propagation, it will be later used in backpropagation part. We also store gradients of our parameters **self.dw**, **self.db** after backpropagation,  those will be later used by the optimizer to update the network . 
+
+We might want to use our implementation with SGD (Stochastic Gradient Descent) where we update parameters after each minibatch or with Gradient Descent where we update parameters after passing all the training data. To use Gradient Descent we will have to store history of minibatch gradients and average over that before we perform update. 
 
 
 
