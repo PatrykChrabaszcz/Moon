@@ -34,7 +34,29 @@ To train Neural Network we will need to adjust weights **w** and biases **b** su
 1. Gradient of loss with respect to its own parameters **w** and **b**, this will be used to adjust those parameters and decrease the loss.
 2. Gradient of loss with respect to its inputs **I**, this information will be send to the previous layer, and used in the same way.
 
-How to compute derivatives with respect to the parameters:
+How to compute derivatives with respect to the parameters. To simplify we consider just one output neuron, later we will generalize to the full layer.
 
 ![ParametersGradient](/assets/img/NumpyNeuralNetwork/NNDerivatives.png)
+
+Using chain rule we derive that:
+
+![ChainRule](/assets/img/NumpyNeuralNetwork/ChainRule.png)
+
+We already have all components to compute gradients. Derivative of **Loss** with respect to output was delivered to us by the next layer in the network, derivative of **f** (activation function) with respect to **x1** can be computed analytically and we know input **I**.
+
+Again we would like to find matrix equations for backpropagation. Starting with an equation for a single input vector (one sample). Dot operator indicates elementwise multiplication:
+
+
+![VectorDerivative](/assets/img/NumpyNeuralNetwork/DerivativeVectorForm.png)
+
+And if we want to forward multiple samples we will have to average gradients over this minibatch:
+
+![VectorDerivative](/assets/img/NumpyNeuralNetwork/DerivativeMatrixForm.png)
+
+Now we need to find out how to compute the gradient of **Loss** with respect to the **input**. This information will be passed to the previous layer (backpropagation) and used as a training signal.
+
+
+
+
+
 
