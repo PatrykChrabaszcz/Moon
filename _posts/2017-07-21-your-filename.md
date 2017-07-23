@@ -65,14 +65,21 @@ We will directly go to the matrix multiplication form:
 
 ## Implementation of Fully Connected Layer
 
-We want to implement fully connected layer as a class.
+We will implement fully connected layer as a class.
 
-Let's start with the constructor 
+We want to be able to:
 
-- **activation**: object that represents nonlinearity function. This object can be used to compute **f(x)** as well as **f'(x)**. 
+- Stack multiple layers on top of each other to form NeuralNetwork
+- Choose activation function 
+- Choose parameter initialization function
+- Choose between Gradient Descent and Stochastic Gradient Descent
+
+### Constructor
+
+- **activation**: object that represents nonlinearity function. This object will be used to compute **f(a)** as well as **f'(a)**.
 - **input_size_info**: describes how many inputs this layer has. We want to simplify usage so we make it possible to derive this information from the previous layer.
-- **init_func**: this function is used to initialize parameters in this layer
-- **neurons_num**: How many neurons this layer has
+- **init_func**: this function is used to initialize parameters in this layer.
+- **neurons_num**: number of neurons in this layer
 
 ```python
 
@@ -102,9 +109,22 @@ class DenseLayer(object):
         self.a = None   # x @ w
         self.y = None   # Output
         self.activation = activation
+        
+
 
 ```
 
 We need to store input value **self.x** when we do forward propagation, it will be later used in backpropagation part. We also store gradients of our parameters **self.dw**, **self.db** after backpropagation,  those will be later used by the optimizer to update the network . 
 
-We might want to use our implementation with SGD (Stochastic Gradient Descent) where we update parameters after each minibatch or with Gradient Descent where we update parameters after passing all the training data. To use Gradient Descent we will have to store history of minibatch gradients and average over that before we perform update.
+We might want to use our implementation with SGD (Stochastic Gradient Descent) where we update parameters after each minibatch or with Gradient Descent where we update parameters after passing all the training data. To use Gradient Descent we will have to store history of minibatch gradients and average over that before we perform update (For bigger network and bigger datasets this implementation will not be memory efficient, this can be improved by storing only the number of minibatches and current mean gradient)
+
+### Forward pass 
+
+```python
+    def forward_pass(self, x):
+        self.x = x
+        self.a = x @ self.w + self.b
+        self.y = self.activation.f(self.a)
+		return self.y
+
+```
