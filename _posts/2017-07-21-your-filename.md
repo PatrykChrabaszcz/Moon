@@ -9,10 +9,9 @@ title: Neural Network in Pyton using Numpy
 # Implementing Neural Network in Python using Numpy
 
 Here we will see how to implement Neural Network in Python using only numpy library. 
-There are plenty of deep learning frameworks currently available for python. Those include  
-"Tensorflow"  
-"Lasagne"  
-"Torch"  
+There are plenty of deep learning frameworks currently available for python:  
+**[Tensorflow](https://www.tensorflow.org/)**  
+**[PyTorch](http://pytorch.org/)**
 
 However it might be a good exercise to implement a Neural Network on our own.
 
@@ -22,7 +21,7 @@ Fully connected layer can be described by the weight matrix, bias vector and act
 
 ![FullyConnectedLayer](/assets/img/NeuralNetworkNumpy/Network.png)
 
-It can be easily seen that those operations can be written as a matrix multiplication. It is presented below (Nonlinearity function ommited on this picture)
+It can be easily seen that those operations can be written as a matrix multiplication as presented below:
 
 ![VectorizedForm](/assets/img/NeuralNetworkNumpy/ForwardVector.png)
 
@@ -30,11 +29,12 @@ That is how activations in fully connected layer are computed for a single input
 
 ![MatrixForm](/assets/img/NeuralNetworkNumpy/ForwardMatrix.png)
 
-To train Neural Network we will need to adjust weights **w** and biases **b** such that we increase the performance of our network (minimize loss). Let's assume that our layer got gradient information from the next layer telling how to adjust outputs **O** to decrease this loss function. Our layer will have to compute two things:
+To train Neural Network we will need to adjust weights **w** and biases **b** such that we increase the performance of our network (minimize the loss). Let's assume that our layer got gradient information from the next layer telling how to adjust outputs **O** to decrease this loss function. Our layer will have to compute two things:
 1. Gradient of loss with respect to its own parameters **w** and **b**, this will be used to adjust those parameters and decrease the loss.
-2. Gradient of loss with respect to its inputs **I**, this information will be send to the previous layer, and used in the same way.
+2. Gradient of loss with respect to its inputs **I**, this information will be send to the previous layer.
 
-How to compute derivatives with respect to the parameters. To simplify we consider just one output neuron, later we will generalize to the full layer.
+How to compute derivatives with respect to the parameters?  
+To simplify we consider just one output neuron, later we will generalize to the full layer.
 
 ![ParametersGradient](/assets/img/NeuralNetworkNumpy/ParamDerivatives.png)
 
@@ -42,18 +42,21 @@ Using chain rule we derive that:
 
 ![ChainRule](/assets/img/NeuralNetworkNumpy/ChainRule.png)
 
-We already have all components to compute gradients. Derivative of **Loss** with respect to output was delivered to us by the next layer in the network, derivative of **f** (activation function) with respect to **x1** can be computed analytically and we know input **I**.
+We already have all components to compute gradients. 
+ - derivative of the **loss** function with respect to the output was delivered to us by the next layer in the network
+ - derivative of **f** (activation function) with respect to **x1** can be computed analytically
+ - we know input **I**.
 
-Again we would like to find matrix equations for backpropagation. Starting with an equation for a single input vector (one sample). Dot operator indicates elementwise multiplication:
+Again we would like to find matrix equations for backpropagation. We start with an equation for a single input vector (dot operator indicates elementwise multiplication):
 
 
 ![VectorDerivative](/assets/img/NeuralNetworkNumpy/ParamVectorGrad.png)
 
-And if we want to forward multiple samples we will have to average gradients over this minibatch:
+If we want to forward multiple samples we will have to average gradients over this minibatch:
 
-![VectorDerivative](/assets/img/NeuralNetworkNumpy/ParamMatrixGrad.png)
+![MatrixDerivative](/assets/img/NeuralNetworkNumpy/ParamMatrixGrad.png)
 
-Now we need to find out how to compute the gradient of **Loss** with respect to the **input**. This information will be passed to the previous layer (backpropagation) and used as a training signal.
+Now we need to find out how to compute the gradient of the **loss** function with respect to the **input**. This information will be passed to the previous layer (backpropagation) and used as a training signal.
 
 
 ![InputDerivative](/assets/img/NeuralNetworkNumpy/InputGradDerivation.png)
@@ -69,7 +72,7 @@ We will implement fully connected layer as a class.
 
 We want to be able to:
 
-- Stack multiple layers on top of each other to form NeuralNetwork
+- Stack multiple layers on top of each other to form a neural network
 - Choose activation function 
 - Choose parameter initialization function
 - Choose between Gradient Descent and Stochastic Gradient Descent
@@ -122,7 +125,7 @@ We will store network parameters inside **self.w** and **self.b** variables. We 
 
 ```
 
-To implement forward pass we simply use matrix form we derived earlier. In this implementation we divide our parameters into weight matrix **self.w** and bias vector **self.b** this way it will easier to implement L2 regularization only to **self.w** matrix. We need to store input **self.x** as it is required later in backward_pass function. Output from this function can be used as an input for the next layer.
+To implement forward pass we simply use matrix form we derived earlier. In this implementation we divide our parameters into weight matrix **self.w** and bias vector **self.b** this way it will easier to implement L2 regularization only to **self.w** matrix. We need to store input **self.x** as it is required later for backward_pass function. Output from forward_pass function can be used as an input for the next layer.
 
 ### Backward pass 
 
@@ -207,16 +210,3 @@ We can train our network updating parameters in each iteration using **one_itera
 ```
 
 Funcion **predict(...)** will simply return output from the last layer, if we use our network for classification this output will represent logit values for each class. It will be used in **_backward_pass(...)** to compute derivatives using objective loss. For classification we will use softmax cross entropy.
-
-
-
-
-
-
-
-
-
-
-
-
-
