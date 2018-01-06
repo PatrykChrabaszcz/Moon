@@ -82,7 +82,7 @@ We want to be able to:
 ```python
 
 class DenseLayer(object):
-    def __init__(self, activation, input_size_info=None, init_func=WeightInit.xavier_init_gauss,
+    def __init__(self, activation_func, input_size_info=None, init_func=WeightInit.xavier_init_gauss,
                  neurons_num=100):
         try:
             input_size = input_size_info.neurons_num
@@ -90,29 +90,27 @@ class DenseLayer(object):
             input_size = input_size_info
 
         self.neurons_num = neurons_num
+        self.activation_func = activation_func
+
         self.w = np.zeros(shape=(input_size, neurons_num), dtype='float32')
         self.b = np.zeros(shape=(1, neurons_num), dtype='float32')
         init_func(self)
 
-        self.x = None                       # Input
-        self.dx = None                      # Gradient w.r.t. input (List for data chunks)
-        self.dw = np.zeros_like(self.w)     # Gradient w.r.t. weights (List for data chunks)
-        self.db = np.zeros_like(self.b)     # Gradient w.r.t. biases (List for data chunks)
+        # In some settings we want to use the mean gradient from
+        # multiple mini-batches or even from the whole dataset.
+        self.grad_w_acc = GradientAccumulator()
+        self.grad_b_acc = GradientAccumulator()
 
-        # Lists used for gradient averaging
-        self.dx_list = []
-        self.dw_list = []
-        self.db_list = []
-        self.s_list = []
+        self.x = None   # Input x
         self.a = None   # x @ w
         self.y = None   # Output
-        self.activation = activation
         
 
 
 ```
 
-We will store network parameters inside **self.w** and **self.b** variables. We store gradients from minibatches and average over them before we perform an update. 
+We will store network parameters inside **self.w** and **self.b** variables.  
+We accumulate gradients from minibatches using GradientAccumulator class, it is required because in some  training settings we use the mean gradient from the whole dataset to perform one weight update. 
 
 ### Forward pass 
 
@@ -125,29 +123,26 @@ We will store network parameters inside **self.w** and **self.b** variables. We 
 
 ```
 
-To implement forward pass we simply use matrix form we derived earlier. In this implementation we divide our parameters into weight matrix **self.w** and bias vector **self.b** this way it will easier to implement L2 regularization only to **self.w** matrix. We need to store input **self.x** as it is required later for backward_pass function. Output from forward_pass function can be used as an input for the next layer.
+To implement forward pass we simply use matrix form we derived earlier. In this implementation we divide our parameters into weight matrix **self.w** and bias vector **self.b** this way it will easier to implement L2 regularization only to **self.w** matrix. We need to store input **self.x** as it is required later for the **backward_pass** function. Output from the **forward_pass** function can be used as an input for the next layer.
 
 ### Backward pass 
 
 ```python
     def backward_pass(self, dl):
-        da = dl * self.activation.f_d(self.a)
-        self.db = da.mean(axis=0)
-        self.dw = self.x.T @ da / self.x.shape[0]
-        self.dx = da @ self.w.T
-        s = self.x.shape[0]
+        grad_a = grad_loss * self.activation_func.f_grad(self.a)
+        grad_b = grad_a.mean(axis=0)
+        grad_w = self.x.T @ grad_a / self.x.shape[0]
+        grad_x = grad_a @ self.w.T
 
         # Store gradients from batches until next update is called
-        self.db_list.append(self.db)
-        self.dw_list.append(self.dw)
-        self.dx_list.append(self.dx)
-        self.s_list.append(s)
+        self.grad_b_acc.append(grad_b)
+        self.grad_w_acc.append(grad_w)
 
-		return self.dx
+        return grad_x
 
 ```
 
-We use matrix form for backpropagation that we derived earlier. We compute gradients of loss **dl** with respect to the parameters **self.dw**, **self.db** and input **self.dx**. Output from this function can be used as an input for the previous layer. 
+We use matrix form for backpropagation that we derived earlier. We compute gradients of loss with respect to the parameters **self.grad_w**, **self.grad_b** and input **self.grad_x**. Output from this function can be used as an input for the previous layer. 
 
 
 ## Stacking layers, implementation of Neural Network
@@ -157,44 +152,14 @@ Neural network will store all layers in a sequence and forward output from the p
 
 ```python
 class Net(object):
-    def __init__(self, solver, objective):
+    def __init__(self, objective):
         self.layers = []
-        self.solver = solver
         self.objective = objective
 
     def add_layer(self, layer):
-		self.layers.append(layer)
+        self.layers.append(layer)
 
-```
-Solver will be used to compute weight updates based on the gradients.
-
-```python
-    # One way to train is to call one_interation()
-    # Weights will be updated after single batch
-    def one_iteration(self, x, y):
-        p = self.predict(x)
-        self._backward_pass(p, y)
-        self._update()
-
-    # Other way to train is to call one_step() until
-    # all data is forwarded, then call finish_iteration()
-    def one_step(self, x, y):
-        p = self.predict(x)
-        self._backward_pass(p, y)
-
-    def finish_iteration(self):
-        self._update()
-        
-    def _update(self):
-        for l in self.layers:
-            l.average_gradients()
-			self.solver.update_layer(l)
-```
-We can train our network updating parameters in each iteration using **one_iteration(...)** or using **one_step** we can compute gradiens for all training data and then average them and apply update using **finish_iteration(...)** function
-
-
-```python
-# Forward pass through all layers
+    # Forward pass through all layers
     def predict(self, x):
         p = self.layers[0].forward_pass(x)
         for l in self.layers[1:]:
@@ -202,11 +167,60 @@ We can train our network updating parameters in each iteration using **one_itera
         return p
 
     # Backward pass through all layers
-    def _backward_pass(self, p, y):
-        dl = self.objective.loss_d(pred=p, targ=y)
+    def backward_pass(self, p, y):
+        grad_loss = self.objective.loss_d(pred=p, targ=y)
         for l in self.layers[::-1]:
-			dl = l.backward_pass(dl)
+            grad_loss = l.backward_pass(grad_loss)
+
+    def loss(self, p, y):
+        return self.objective.loss(pred=p, targ=y)
+```
+Solver will be used to compute weight updates based on the gradients.
+
+```python
+ class Solver:
+    class Base:
+        def __init__(self, network):
+            self.network = network
+            self.t = 0
+
+        def one_step(self, x, y):
+            p = self.network.predict(x)
+            self.network.backward_pass(p, y)
+
+        def finish_iteration(self):
+            self._update()
+
+        def _update(self):
+            for l in self.network.layers:
+                delta_w, delta_b = self._compute_update(l)
+                l.update(delta_w, delta_b)
+            self._advance()
+
+        def _advance(self):
+            self.t += 1
+
+        def _compute_update(self, layer):
+            raise NotImplementedError
+```
+To train the network we will use the function **one_step** (providing input data together with the corresponding targets), this function will accumulate the gradients from all samples.  When we are ready to perform an update we will call the function **finish_iteration**.
+
+
+```python
+    class Simple(Base):
+        (...)
+
+        def _compute_update(self, layer):
+            lr = self.decay_algorithm.learning_rate(self.t)
+            grad_w = layer.grad_w_acc.mean_gradient()
+            grad_b = layer.grad_b_acc.mean_gradient()
+            delta_w = -lr * (grad_w + self.alpha*layer.w)
+            delta_b = -lr * grad_b
+
+            return delta_w, delta_b
 
 ```
+Simple procedure for computing weight update is provided inside the **Solver.Simple** class.
+
 
 Funcion **predict(...)** will simply return output from the last layer, if we use our network for classification this output will represent logit values for each class. It will be used in **_backward_pass(...)** to compute derivatives using objective loss. For classification we will use softmax cross entropy.
