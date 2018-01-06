@@ -145,7 +145,7 @@ To implement forward pass we simply use matrix form we derived earlier. In this 
 We use matrix form for backpropagation that we derived earlier. We compute gradients of loss with respect to the parameters **self.grad_w**, **self.grad_b** and input **self.grad_x**. Output from this function can be used as an input for the previous layer. 
 
 
-## Stacking layers, implementation of Neural Network
+## Stacking layers, implementation of the Neural Network
 
 Neural network will store all layers in a sequence and forward output from the previous layer to the next layer during forward pass, it will also compute loss function using output from the last layer. During backpropagation it will forward training signal from the next layer to the previous layer.
 
@@ -223,4 +223,8 @@ To train the network we will use the function **one_step** (providing input data
 Simple procedure for computing weight update is provided inside the **Solver.Simple** class.
 
 
-Funcion **predict(...)** will simply return output from the last layer, if we use our network for classification this output will represent logit values for each class. It will be used in **_backward_pass(...)** to compute derivatives using objective loss. For classification we will use softmax cross entropy.
+## Training 
+
+
+
+
