@@ -1,7 +1,7 @@
 ---
 categories: blog
 layout: post
-published: true
+published: false
 date: '2018-01-06 16:13 +0100'
 excerpt_separator: <!--more-->
 title: Implementing a Neural Network using Numpy
@@ -223,8 +223,4 @@ To train the network we will use the function **one_step** (providing input data
 Simple procedure for computing weight update is provided inside the **Solver.Simple** class.
 
 
-## Training 
-
-
-
-
+## Training
