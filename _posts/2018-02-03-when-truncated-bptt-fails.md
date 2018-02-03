@@ -232,7 +232,7 @@ Results might come surprising. They were for me at the beginning when I used rea
 
 Loss per epoch:
 
-**Plot 1**
+![Fig. 1](/assets/img/WhenTruncatedBPTTFails/losses.png)
 
 
 When we pass training data and apply updates to the weights, network is able to correctly classify sequences. However, when we use this network and pass the same data again but now without updates it gives random predictions. 
@@ -243,10 +243,10 @@ Instead of looking at the inputs, network learns to classify random hidden state
 
 On the next plot we show how the loss changes during the last epoch:
 
-**Plot 2** 
+![Fig. 2](/assets/img/WhenTruncatedBPTTFails/losses_last_epoch.png)
 
-We see that network needs just a cuple of training iterations to properly classify the new random state (Plot 2).
-Network develops an ability to quickly learn to classify new hidden state. Interestingly it needs couple of epochs at the beginning to achieve this property (Plot 1).
+We see that network needs just a cuple of training iterations to properly classify the new random state (Fig. 2).
+Network develops an ability to quickly learn to classify new hidden state. Interestingly it needs couple of epochs at the beginning to achieve this property (Fig. 1).
 
 
 We used a simple setting where 'bptt_size' is 10 but the same behavior was observed on real word data with thousands of training examples where 'bptt_size' was 1000 and training sequences were longer than 100k.
@@ -255,13 +255,3 @@ We used a simple setting where 'bptt_size' is 10 but the same behavior was obser
 ### Take out note
 
 Be careful when you train using Truncated BPTT on long sequences where each subsequence has the same label. What might happen is that network will develop the ability to quickly learn to classify new random hidden states in each epoch. Even if you fill initial states with 0, after first iteration they will change based on the input data, so the problem still preserves (you can run experiments with --data_type SameDistRandom and --initial_state_type Zeros to see this behavior).
-
-
-
-
-
-
-
-
-
-
