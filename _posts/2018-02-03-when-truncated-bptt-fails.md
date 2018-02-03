@@ -251,6 +251,6 @@ Network develops an ability to quickly learn to classify new hidden state. Inter
 We used a simple setting where 'bptt_size' is 10 but the same behavior was observed on real word data with thousands of training examples where 'bptt_size' was 1000 and training sequences were longer than 100k.
 
 
-### Take out note
+### Take out message
 
 Be careful when you train using Truncated BPTT on long sequences where each subsequence has the same label. What might happen is that network will develop the ability to quickly learn to classify new random hidden states in each epoch. Even if you fill initial states with 0, after first iteration they will change based on the input data, so the problem still preserves (you can run experiments with --data_type SameDistRandom and --initial_state_type Zeros to see this behavior).
