@@ -220,7 +220,6 @@ def main(cuda, learning_rate, weight_decay, input_size, examples_per_class, epoc
 
 - We train a simple RNN model with one layer (512 neurons) using random input data. 
 - We use the setting where the same sequence appears twice in the dataset, once with label "0" and once with label "1". There should be no way for the model to differentiate between both.
-- We train with a simple RNN model with one layer using random data (each timepoint comes from a normal distribution). 
 - In the first iteration we feed different random states for each example. 
 - In subsequent iterations we simply forward hidden states from the previous iteration.
 
