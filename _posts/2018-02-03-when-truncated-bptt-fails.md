@@ -5,6 +5,13 @@ published: true
 date: '2018-02-03 12:46 +0100'
 excerpt_separator: <!--more-->
 title: When Truncated BPTT Fails
+tags:
+  - Truncated BPTT
+  - 'Long Sequences '
+  - RNN
+author: Patryk Chabaszcz
+excerpt: When Truncated BPTT Fails
+comments: true
 ---
 
 
