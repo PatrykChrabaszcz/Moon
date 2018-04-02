@@ -22,7 +22,7 @@ title: Paper Notes
 "The main idea is to apply the dropout operator only to the non-recurrent connections"
 
 Questions: 
-	- Is dropout mask different for different timesteps? Probably yes.
+- Is dropout mask different for different timesteps? Probably yes.
     
    
 ### Dropout improves recurrent neural networks for handwriting recognition (5 Nov 2013
