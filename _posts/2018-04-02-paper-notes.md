@@ -37,7 +37,7 @@ title: Paper Notes
 "Extensive  experiments  also  provide  evidence  that dropout  behaves  similarly  to  weight  decay,  but  the  dropout hyper-parameter  is  much  easier  to  tune  than  those  of  weight decay.
 
 ### Recurrent neural network regularization (8 Sep 2014) (ICLR 2015) Zaremba et al. 
-- First approach for using dropout in RNNs (LSTM)
+- Authors claim that it is the first approach for using dropout in RNNs (LSTM)
 - Dropout applied only to the non recurrent connections
 - Applies dropout on the RNN input and output (L+1 dropouts per timestep) 
 - Dropout regularized model gives a similar performance to an ensemble of 10 non-regularized models. 
