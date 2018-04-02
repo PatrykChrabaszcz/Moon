@@ -8,18 +8,18 @@ title: Paper Notes
 ---
 ## RNN Dropout
 
+
 ### Improving neural networks by preventing co-adaptation of feature detectors (3 Jul 2012) (Arxiv)
 - Set of possible weights that perform well on the train data is huge, but not many of them will perform well on the test data.
 - Can be seen as a low cost method for building an ensemble of networks that share some of the weights.
 - Instead of L2 normalization they put an upper bound L2 norm constraint of the incoming weight wector for each hidden unit (I think that by "unit" they mean "layer").
 - They fix dropout probability to 0.5 
-
-"Using a constraint" {limit on max L2 norm} "rather than a penalty" {they mean L2 regularization penalty} "prevents weights from growing very large no matter how large the proposed weight-update is. This makes it possible to start with a very large learning rate which decays during learning, thus allowing a far more thorough search of the weight-space than methods that start with small weights and use a small learning rate.
-"In networks with a single hidden layer of N units and a “softmax” output layer for computing the probabilities of the class labels, using the mean network is exactly equivalent to taking the geometric mean of the probability distributions over labels predicted by all 2^N possible networks."
-
-Questions:
-- When they talk about single hidden layer of N units network do they mean a network without nonlinearity?
-
+- Went from 160 test errors to 110 errors on MNIST using dropout 0.5 on hidden activations and 0.2 on the input.
+"Using a constraint" {limit on max L2 norm} "rather than a penalty" {they mean L2 regularization penalty} "prevents weights from growing very large no matter how large the proposed weight-update is. This makes it possible to start with a very large learning rate which decays during learning, thus allowing a far more thorough search of the weight-space than methods that start with small weights and use a small learning rate."
+"It is also possible to adapt the individual dropout probability of each hidden or input unit by comparing the average performance on a validation set with the average performance when the unit is present.  This makes the method work slightly better."
+"For datasets in which the required input-output mapping has a number of fairly different regimes, performance can probably be further improved by making the dropout probabilities be a learned function of the input, thus creating a statistically efficient “mixture of experts” in which there are combinatorially many experts, but each parameter gets adapted on a large fraction of the training data."
+"Dropout can be seen as an extreme form of bagging in which each model is trained on a single case and each parameter of the model is very strongly regularized by sharing it with the corresponding parameter in all the other models. This is a much better regularizer than the standard method of shrinking parameters towards zero."
+"One reason why dropout gives major improvements over backpropagation is that it encourages each individual hidden unit to learn a useful feature without relying on specific other hidden units to correct its mistakes."
 
 ### Dropout improves recurrent neural networks for handwriting recognition (5 Nov 2013) (ICFHR 2014)
 - Authors claim it's a first work that applies dropout to RNNs.
