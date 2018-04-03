@@ -69,6 +69,10 @@ TODO. Some theory behind dropout
 
 Gal about this paper: "They reason that with dropout, the RNN’s dynamics change dramatically, and that dropout should be applied to the <<non-dynamic>> parts of the model – connections feeding from the hidden layer to the output layer"
 
+
+# Regularization of Neural Networks using DropConnect
+
+
 # Where to Apply Dropout in Recurrent Neural Networks for Handwriting Recognition? (ICDAR 2015) Bluche et al.
 - Same people as "Dropout improves rnn for handwriting recognition"
 - Investigates bidirectional LSTM 
@@ -118,19 +122,78 @@ outputs alone (no dropout is used with the recurrent connections since the use o
 "Yet it seems that with no embedding dropout, a higher dropout probability within the recurrent layers leads to overfitting! This presumably happens because of the large number of parameters in the embedding layer which is not regularised. Regularising the embedding layer with dropout probability pE= 0.5 we see that a higher recurrent layer dropout probability indeed leads to increased robustness to overfitting, as expected. 
 "(...) we assess the importance of weight decay with our dropout variant. Common practice is to remove weight decay with naive dropout.  Our results suggest that weight decay plays an important role with our variant (it corresponds to our prior belief of the distribution over the weights)."
 
-# RnnDrop: A Novel Dropout for RNNs in ASR
-- Gal claims it is parallel to their work about variational RNN 
+Merity calls it "Variational Dropout"
+
+# Hybrid speech recognition with deep bidirectional LSTM
+- Presents noise injection as referenced by Moon in his dropout paper.
+
+Mono says: "In weight noise injection, zero mean Gaussian noise is added to the weights when computing the gradient."
+
+
+# RnnDrop: A Novel Dropout for RNNs in ASR (Dec 2015) (ASRU 2015) Moon et al. (Samsung)
+- Claims that previous dropout only on inputs and outputs is worse than "weight noise injection" regularization.
+- Dropout mask for a sequence drawn once for all timesteps
+- Different dropout masks for different sequences within minibatch.
+- Gal claims it is parallel to their work about variational RNN
+- Used for phoneme  recognition (TIMIT) and speech recognition (Wall Street Journal WSJ) 
+
+"(...) there have been some attempts to apply the dropout, a popular  regularization scheme for the feed forward neural networks, to RNNs, but they do not perform as well as other regularization scheme such  as weight noise injection."
+"(...) rnnDrop, which drops out hidden nodes instead of some connections. That is, rnnDrop drops both the non-recurrent and recurrent connectionsthat are connected to the dropped nodes.More importantly,the dropout mask is randomly selected for each input sequenceand fixed throughout the sequence. "
+"Although DBLSTM networks trained with rnnDropshowed superiorperformances, it took much longer to train them"
 
 Gal about this work: "They randomly drop elements in the LSTM’s internal cell ct and use the same mask at every time step.  This is the closest to our proposed approach (although fundamentally different to the approach we suggest)"
 Gal when reproducing results from this work: "Adding our embedding dropout, the model performs much better, but still underperforms compared to applying dropout on the inputs and outputs alone"
+
+# Recurrent dropout without memory loss
+- Merity sais it is reminescent to Zoneout 
+Merity said: "Another approach is to regularize the network through limiting updates to the RNN’s hidden state. (...) authors drop updates to network units, specifically the input gates of the LSTM, in lieu of the units themselve."
+
+# Zoneout: Regularizing RNNs by Randomly Preserving Hidden Activations
+Merity sais about this work: "(...) updates to the hidden state may fail to occur for randomly selected neurons"
+
+
+
+# Regularizing and Optimizing LSTM Language Models (Aug 2017) (Arxiv) Merity et al. (Salesforce)
+- SOTA on Penm Treebank and WikiText-2.
+- Adding neural cache to the model futher improves the performance.
+- They use  averaged SGD (ASGD) for training. Their method is called NT-ASGD which autotunes T
+- Use random sequence length but compare it with very naive implementation where sequence starting point is not randomized. 
+- When using longer sequences they use bigger (Need to look at the code to confirm because it is not clearly stated in the paper) learning rate to make influence of short and long sequences equal.
+- Uses embedding dropout as Gal 
+- Uses weight tying
+- Uses Temporal Activation Regularization TAR (also Merity idea) to penalize the model when it produces large changes in hidden state between timesteps.
+- AR penalizes hidden activations that are significantly larger than 0
+- AR and TAR only applied to the final LSTM output
+- They use gradient cliping (0.25)
+- For each technique they use they also check the performance when this technique is disabled. The most influencial one is hidden to hidden weight decay.
+
+"We propose the weight-dropped LSTM which uses DropConnect on hidden-to-hidden weights as a form of recurrent regularization"
+"(...) we introduce NT-ASGD, a variant of the averaged stochastic gradient method, wherein the averaging trigger is determined using a non-monotonic condition as opposed to being tuned by the user."
+"The weight-dropped LSTM applies recurrent regularization through a DropConnect mask on the hidden-to-hidden recurrent weights.  Other strategies include the use of randomized-length backpropagation through time (BPTT), embedding dropout, activation regularization (AR), and temporal activation regularization (TAR)."
+"As no modifications are required of the LSTM implementation these regularization strategies are compatible with black box libraries, such as NVIDIA cuDNN, which can be many times faster than naïve LSTM implementations."
+" In the context of word-level language modeling, past work has empirically found that SGD outperforms other methods" {Adam, SGD with Momentum etc.} " in not only the final loss but also in the rate of convergence"
+"We propose a variant of ASGD where T is determined on the fly through a non-monotonic criterion and show that it achieves better training outcomes compared to SGD."
+"As the dropout operation is applied once to the weight matrices, before the forward and backward pass, the impact on training speed is minimal and any standard RNN implementation can be used, including inflexible but highly optimized black box LSTM implementations such as NVIDIA’s cuDNN LSTM"
+"As the same weights are reused over multiple timesteps, the same individual dropped weights remain dropped for the entirety of the forward and backward pass"
+"(...) we use variational dropout for all other dropout operations, specifically using the same dropout mask for all inputs and outputs of the LSTM within a given forward and backward pass. Each example within the mini-batch uses a unique dropout mask, rather than a single dropout mask being used over all examples, ensuring diversity in the elements dropped out."
+"In addition, L2 decay can be used on the individual unit activations and on the difference in outputs of an RNN at different time steps; these strategies labeled as activation regularization (AR) and temporal activation regularization (TAR) respectively"
+"In past work, pointer based attention models have been shown to be highly effective in improving language modeling "
+
+# Recurrent dropout without memory loss (Mar 2016) (Arxiv) Semenitua 
+
 
 # General 
 #Maxout networks
 
 
 # RNNs 
-
-
+# On the State of the Art of Evaluation in Neural Language Models
+- Very nice visualization for hyperparameters
+Marity says: "(...) apply extensive hyperparameter search to an LSTM based language modeling implementation, analyzing the sensitivity of RNN based language models to hyperparameters. Unlike our work, they use a modified LSTM, which caps the input gate it to be min(1−ft, it), use Adam withβ1= 0 rather than SGD or ASGD, use skip connections between LSTM layers, and use a black box hyperparametertuner for exploring models and settings."
+# Improving neural language models with a continuous cache.
+ - To check what is a cache model
+ - Merity sais that it can be added on top of already trained model
+ 
 # Martin Sundermeyer, Ralf Schlüter, and Hermann Ney. LSTM neural networks for language modeling. In
 INTERSPEECH
 , 201
@@ -144,5 +207,24 @@ NIPS
 , 2014
 
 
+# Batch norm etc
 
-
+Other forms of regularization explicitly act upon activa-
+tions such as batch normalization (
+Ioffe & Szegedy
+,
+2015
+),
+recurrent batch normalization (
+Cooijmans et al.
+,
+2016
+), and
+layer normalization (
+Ba et al.
+,
+2016
+). These all introduce
+additional training parameters and can complicate the trai
+n-
+ing process while increasing the sensitivity of the model.
