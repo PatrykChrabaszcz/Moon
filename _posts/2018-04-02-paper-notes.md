@@ -115,6 +115,9 @@ outputs alone (no dropout is used with the recurrent connections since the use o
 "(...) we show that it is possible to derive a variational inference based variant of dropout which successfully regularises such parameters" {meaning recurrent} ", by grounding our approach in recent theoretical research."
 "Implementing our approximate inference is identical to implementing dropout in RNNs with the same network units dropped at each time step , randomly dropping inputs, outputs, and recurrent connections.  This is in contrast to existing techniques, where different network units would be dropped at different time steps, and no dropout would be applied to the recurrent connections."
 "A common approach for regularisation is to reduce model complexity (necessary with the non-regularised LSTM). With the Variational models however, a significant reduction in perplexity is achieved by using larger models."
+"Yet it seems that with no embedding dropout, a higher dropout probability within the recurrent layers leads to overfitting! This presumably happens because of the large number of parameters in the embedding layer which is not regularised. Regularising the embedding layer with dropout probability pE= 0.5 we see that a higher recurrent layer dropout probability indeed leads to increased robustness to overfitting, as expected. 
+"(...) we assess the importance of weight decay with our dropout variant. Common practice is to remove weight decay with naive dropout.  Our results suggest that weight decay plays an important role with our variant (it corresponds to our prior belief of the distribution over the weights)."
+
 # RnnDrop: A Novel Dropout for RNNs in ASR
 - Gal claims it is parallel to their work about variational RNN 
 
