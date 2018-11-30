@@ -1,7 +1,7 @@
 ---
 categories: blog
 layout: post
-published: true
+published: false
 date: '2018-01-06 16:13 +0100'
 excerpt_separator: <!--more-->
 title: Implementing a Neural Network using Numpy
